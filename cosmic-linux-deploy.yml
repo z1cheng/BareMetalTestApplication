@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: probe-cosmic-linux
+  namespace: probe-cosmic
+  labels:
+    app: probe-cosmic-linux
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: probe-cosmic-linux
+  template:
+    metadata:
+      labels:
+        app: probe-cosmic-linux
+    spec:
+      containers:
+      - env:
+        name: probe-cosmic-linux
+        image: cosmicgallatinacr.azurecr.cn/probe/cosmic-linux
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      nodeSelector:
+        kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: probe-cosmic-linux
+  namespace: probe-cosmic
+spec:
+  type: LoadBalancer
+  selector:
+    app: probe-cosmic-linux
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30080
